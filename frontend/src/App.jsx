@@ -5,6 +5,7 @@ import Signup from './pages/register';
 import Home from './pages/home';
 import Dashboard from './pages/dashboard';
 import PrivateRoute from './routes/PrivateRoute';
+import YourProfile from './pages/yourprofile';
 
 
 function App() {
@@ -21,6 +22,12 @@ function App() {
             <Dashboard />
           </PrivateRoute>
         } />
+        <Route path="/yourprofile" element={
+            <PrivateRoute>
+              <Navbar />
+              <YourProfile />
+            </PrivateRoute>
+          } />
       </Routes>
     </div>
   </Router>
