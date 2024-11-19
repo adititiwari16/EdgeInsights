@@ -10,11 +10,11 @@ const cors = require('cors');
 // Enable CORS for all origins
 app.use(cors({
   origin: 'http://localhost:5173', // Frontend URL
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST'],
   credentials: true // Allow cookies to be sent
 }));
 
-dotenv.config();
+require('dotenv').config();
 
 // Middlewares
 app.use(express.json());
@@ -135,78 +135,6 @@ app.post("/signin", async (req, res) => {
     }
     
 });
-
-// // fetch username
-// app.get("/user", authenticateToken, async (req, res) => {
-//     try {
-//         const user = await User.findById(req.user.id);  // Get user by decoded token ID
-//         if (!user) {
-//             return res.status(404).send("User not found");
-//         }
-//         res.status(200).json({
-//             firstname: user.firstname,
-//             lastname: user.lastname
-//         });
-//     } catch (error) {
-//         console.error('Error fetching user:', error);
-//         res.status(500).send("Internal Server Error");
-//     }
-// });
-
-// // Update user's name
-// app.put("/user", authenticateToken, async (req, res) => {
-//     try {
-//         const { firstname, lastname } = req.body;
-        
-//         // Validate the input
-//         if (!firstname || !lastname) {
-//             return res.status(400).send("Please provide both firstname and lastname");
-//         }
-
-//         // Find the user and update their name
-//         const user = await User.findById(req.user.id);
-//         if (!user) {
-//             return res.status(404).send("User not found");
-//         }
-
-//         user.firstname = firstname;
-//         user.lastname = lastname;
-
-//         await user.save();  // Save the updated user
-
-//         res.status(200).json({
-//             message: "User information updated successfully",
-//             firstname: user.firstname,
-//             lastname: user.lastname
-//         });
-//     } catch (error) {
-//         console.error('Error updating user:', error);
-//         res.status(500).send("Internal Server Error");
-//     }
-// });
-
-// // Delete user's name (Reset it)
-// app.delete("/user", authenticateToken, async (req, res) => {
-//     try {
-//         const user = await User.findById(req.user.id);
-//         if (!user) {
-//             return res.status(404).send("User not found");
-//         }
-
-//         // Reset the user's name
-//         user.firstname = "";
-//         user.lastname = "";
-
-//         await user.save();  // Save the reset user
-
-//         res.status(200).json({
-//             message: "User information reset successfully"
-//         });
-//     } catch (error) {
-//         console.error('Error deleting user name:', error);
-//         res.status(500).send("Internal Server Error");
-//     }
-// });
 
 app.listen(8000, () => {
   console.log("Server is listening on port 8000");
