@@ -1,5 +1,16 @@
 // src/api_services/api.js
 const API_BASE_URL = 'http://localhost:8000';
+import axios from 'axios';
+
+export const getUserProfile = async () => {
+  try {
+      const response = await axios.get(`${apiUrl}/users/profile`);
+      return response.data;
+  } catch (error) {
+      console.error('Error fetching user profile:', error);
+      throw error;
+  }
+};
 
 export const registerUser = async (userData) => {
   try {
@@ -25,7 +36,6 @@ export const registerUser = async (userData) => {
   }
 };
 
-
 export const loginUser = async (userData) => {
   try {
     const response = await fetch(`${API_BASE_URL}/signin`, { // Updated endpoint
@@ -47,3 +57,51 @@ export const loginUser = async (userData) => {
   }
 };
 
+export const updatePhone = async (phone) => {
+  try {
+      const response = await fetch('http://localhost:8000/user/phone', {
+          method: 'PUT',
+          headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+          body: JSON.stringify({ phone }),
+      });
+      return await response.json();
+  } catch (error) {
+      console.error('Error updating phone:', error);
+      throw error;
+  }
+};
+
+export const updateAddress = async (addressId, newAddress) => {
+  try {
+      const response = await fetch(`http://localhost:8000/user/address/${addressId}`, {
+          method: 'PUT',
+          headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+          body: JSON.stringify(newAddress),
+      });
+      return await response.json();
+  } catch (error) {
+      console.error('Error updating address:', error);
+      throw error;
+  }
+};
+
+export const deleteAddress = async (addressId) => {
+  try {
+      const response = await fetch(`http://localhost:8000/user/address/${addressId}`, {
+          method: 'DELETE',
+          headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+      });
+      return await response.json();
+  } catch (error) {
+      console.error('Error deleting address:', error);
+      throw error;
+  }
+};

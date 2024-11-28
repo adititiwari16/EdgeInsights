@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const userRoutes = require('./routes/users');
 
 // Enable CORS for all origins
 app.use(cors({
@@ -17,6 +18,7 @@ app.use(cors({
 require('dotenv').config();
 
 // Middlewares
+app.use('/users', userRoutes);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 DBConnection();
@@ -46,6 +48,7 @@ app.get("/home", (req, res)=>{
     res.send("welcome to home");
 })
 
+// registration page
 app.post("/register", async (req, res) => {
     console.log('Received registration data:', req.body);
     try {
@@ -90,6 +93,7 @@ app.post("/register", async (req, res) => {
     }
 });
 
+// signin page
 app.post("/signin", async (req, res) => {
     try {
         //get all the user data
@@ -134,6 +138,59 @@ app.post("/signin", async (req, res) => {
         console.log(error.message);
     }
     
+});
+
+// Update Phone Number
+app.put('/user/phone', authenticateToken, async (req, res) => {
+    try {
+        const { phone } = req.body;
+        if (!phone) return res.status(400).send('Phone number is required');
+
+        const user = await User.findById(req.user.id);
+        user.phone = phone;
+        await user.save();
+
+        res.status(200).json({ message: 'Phone number updated successfully!', phone });
+    } catch (error) {
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// Update Address
+app.put('/user/address/:id', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { type, value } = req.body;
+
+        const user = await User.findById(req.user.id);
+        const address = user.addresses.id(id); // Find address by ID
+        if (!address) return res.status(404).send('Address not found');
+
+        address.type = type || address.type; // Update only fields that are passed
+        address.value = value || address.value;
+
+        await user.save();
+        res.status(200).json({ message: 'Address updated successfully!', address });
+    } catch (error) {
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// Delete Address
+app.delete('/user/address/:id', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findById(req.user.id);
+        const address = user.addresses.id(id); // Find address by ID
+        if (!address) return res.status(404).send('Address not found');
+
+        address.remove(); // Remove the address from the list
+        await user.save();
+
+        res.status(200).json({ message: 'Address deleted successfully!' });
+    } catch (error) {
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 app.listen(8000, () => {
